@@ -1,0 +1,37 @@
+%BYE { #01 .System/halt DEO BRK }
+%NEW_LINE { .Console/write DEO }
+%PRINT_SHORT { DEI2 ;print-short-decimal JSR2 #0a }
+%PRINT_BYTE { DEI ;print-byte-decimal JSR2 #0a }
+
+|00 @System     &vector $2 &wst      $1 &rst    $1 &eaddr  $2 &ecode  $1 &pad     $1 &r       $2 &g      $2 &b     $2 &debug  $1 &halt $1
+|10 @Console    &vector $2 &read     $1 &pad    $5 &write  $1 &error  $1
+|c0 @DateTime   &year   $2 &month    $1 &day    $1 &hour   $1 &minute $1 &second  $1 &dotw    $1 &doty   $2 &isdst $1
+
+|0100
+.DateTime/year PRINT_SHORT NEW_LINE
+.DateTime/month PRINT_BYTE NEW_LINE
+.DateTime/day PRINT_BYTE NEW_LINE
+.DateTime/hour PRINT_BYTE NEW_LINE
+.DateTime/minute PRINT_BYTE NEW_LINE
+.DateTime/second PRINT_BYTE NEW_LINE
+.DateTime/dotw PRINT_BYTE NEW_LINE
+.DateTime/doty PRINT_SHORT NEW_LINE
+.DateTime/isdst PRINT_BYTE NEW_LINE
+BYE
+
+@print-byte-decimal ( byte -- )
+	#64 DIVk DUP #30 ADD .Console/write DEO MUL SUB
+	&second
+	#0a DIVk DUP #30 ADD .Console/write DEO MUL SUB
+	&third
+	             #30 ADD .Console/write DEO
+	JMP2r
+
+@print-short-decimal ( short* -- )
+	#03e8 DIV2k
+		DUP ,print-byte-decimal/second JSR
+		MUL2 SUB2
+	#0064 DIV2k
+		DUP ,print-byte-decimal/third JSR
+		MUL2 SUB2
+	NIP ,print-byte-decimal/second JMP

@@ -1,0 +1,35 @@
+%HALT { #01 .System/halt DEO BRK }
+%NEWLINE { #0a #18 DEO }
+|00 @System     [ &vector $2 &wst  $1 &rst    $1 &pad   $4 &r $2 &g $2 &b $2   &debug $1 &halt $1 ]
+|a0 @File0 &vector $2 &success $2 &stat $2 &delete $1 &append $1 &name $2 &length $2 &read $2 &write $2
+
+|0100
+;file_name .File0/name DEO2  #003f .File0/length DEO2
+;stat_output_1 .File0/read DEO2 ;stat_output_1 ;print_str JSR2
+;seperator ;print_str JSR2 NEWLINE
+;stat_output_2 .File0/read DEO2 ;stat_output_2 ;print_str JSR2
+;seperator ;print_str JSR2 NEWLINE
+;stat_output_3 .File0/read DEO2 ;stat_output_3 ;print_str JSR2
+;seperator ;print_str JSR2 NEWLINE
+;stat_output_4 .File0/read DEO2 ;stat_output_4 ;print_str JSR2
+;seperator ;print_str JSR2 NEWLINE
+;stat_output_5 .File0/read DEO2 ;stat_output_5 ;print_str JSR2
+HALT
+
+@file_name "./roms/devices $1
+@seperator "*** $1
+@stat_output_1 $3f
+@stat_output_2 $3f
+@stat_output_3 $3f
+@stat_output_4 $3f
+@stat_output_5 $3f
+@stat_output_6 $3f
+@stat_output_7 $3f
+
+@print_str ( str* -- )
+	&while
+		LDAk #18 DEO
+		INC2 LDAk ,&while JCN
+	POP2
+    #10 #18 DEO
+JMP2r
